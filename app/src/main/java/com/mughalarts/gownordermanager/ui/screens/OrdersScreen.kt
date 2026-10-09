@@ -27,7 +27,10 @@ import com.mughalarts.gownordermanager.viewmodel.OrderFilter
 import com.mughalarts.gownordermanager.viewmodel.OrdersViewModel
 
 @Composable
-fun OrdersScreen(viewModel: OrdersViewModel = viewModel()) {
+fun OrdersScreen(
+    onOrderClick: (Long) -> Unit,
+    viewModel: OrdersViewModel = viewModel()
+) {
     val orders by viewModel.orders.collectAsStateWithLifecycle()
     val query by viewModel.query.collectAsStateWithLifecycle()
     val filter by viewModel.filter.collectAsStateWithLifecycle()
@@ -85,7 +88,7 @@ fun OrdersScreen(viewModel: OrdersViewModel = viewModel()) {
                     contentPadding = PaddingValues(bottom = 16.dp)
                 ) {
                     items(list, key = { it.id }) { order ->
-                        OrderCard(order)
+                        OrderCard(order = order, onClick = { onOrderClick(order.id) })
                     }
                 }
             }

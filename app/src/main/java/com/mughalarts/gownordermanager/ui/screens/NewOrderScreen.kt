@@ -26,6 +26,7 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.material3.rememberDatePickerState
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -46,15 +47,26 @@ import com.mughalarts.gownordermanager.viewmodel.GownColor
 import com.mughalarts.gownordermanager.viewmodel.GownColorState
 import com.mughalarts.gownordermanager.viewmodel.NewOrderViewModel
 
+/**
+ * Used for both a new order (orderId = null) and editing a saved order (orderId = its id).
+ * [onSaved] receives the id of the saved order.
+ */
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun NewOrderScreen(
-    onOrderSaved: () -> Unit,
+    orderId: Long?,
+    onSaved: (Long) -> Unit,
     viewModel: NewOrderViewModel = viewModel()
 ) {
     val state by viewModel.uiState.collectAsStateWithLifecycle()
-    val orderNumber by viewModel.nextOrderNumber.collectAsStateWithLifecycle()
+    val orderNumber by viewModel.orderNumber.collectAsStateWithLifecycle()
+    val orderDate by viewModel.orderDate.collectAsStateWithLifecycle()
     var showDatePicker by remember { mutableStateOf(false) }
+    val isEditing = orderId != null
+
+    LaunchedEffect(orderId) {
+        viewModel.loadOrder(orderId)
+    }
 
     if (showDatePicker) {
         val pickerState = rememberDatePickerState(initialSelectedDateMillis = state.deliveryDate)
@@ -84,12 +96,18 @@ fun NewOrderScreen(
             .padding(16.dp),
         verticalArrangement = Arrangement.spacedBy(16.dp)
     ) {
-        Text(
-            text = "New Order",
-            style = MaterialTheme.typography.headlineMedium,
-            fontWeight = FontWeight.Bold,
-            color = MaterialTheme.colorScheme.primary
-        )
+        Column(verticalArrangement = Arrangement.spacedBy(4.dp)) {
+            Text(
+                text = if (isEditing) "Edit Order" else "New Order",
+                style = MaterialTheme.typography.headlineMedium,
+                fontWeight = FontWeight.Bold,
+                color = MaterialTheme.colorScheme.primary
+            )
+            Text(
+                text = "All fields are optional.",
+                style = MaterialTheme.typography.bodyMedium
+            )
+        }
 
         SectionCard("CUSTOMER INFORMATION") {
             OutlinedTextField(
@@ -125,7 +143,7 @@ fun NewOrderScreen(
 
         SectionCard("ORDER INFORMATION") {
             InfoRow("Order Number", orderNumber, valueBold = true)
-            InfoRow("Order Date", formatDate(viewModel.orderDateMillis))
+            InfoRow("Order Date", formatDate(orderDate))
             Text(
                 text = "Delivery Date",
                 style = MaterialTheme.typography.bodyMedium,
@@ -219,13 +237,16 @@ fun NewOrderScreen(
         }
 
         Button(
-            onClick = { viewModel.saveOrder(onOrderSaved) },
+            onClick = { viewModel.saveOrder(onSaved) },
             modifier = Modifier
                 .fillMaxWidth()
                 .height(56.dp),
             shape = RoundedCornerShape(14.dp)
         ) {
-            Text("SAVE ORDER", style = MaterialTheme.typography.titleMedium)
+            Text(
+                text = if (isEditing) "SAVE CHANGES" else "SAVE ORDER",
+                style = MaterialTheme.typography.titleMedium
+            )
         }
     }
 }

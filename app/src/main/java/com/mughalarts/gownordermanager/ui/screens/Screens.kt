@@ -12,7 +12,6 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Button
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -77,15 +76,8 @@ fun SettingsScreen(viewModel: SettingsViewModel = viewModel()) {
                 style = MaterialTheme.typography.bodyLarge,
                 fontWeight = FontWeight.Medium
             )
-            OutlinedButton(
-                onClick = { },
-                enabled = false,
-                modifier = Modifier.fillMaxWidth()
-            ) {
-                Text("Choose Logo")
-            }
             Text(
-                text = "Logo selection will be added in Stage 12.",
+                text = "The MUGHAL ARTS logo is built into the Agreement Slip.",
                 style = MaterialTheme.typography.bodySmall
             )
             OutlinedTextField(

@@ -30,6 +30,7 @@ import com.mughalarts.gownordermanager.viewmodel.HomeViewModel
 @Composable
 fun HomeScreen(
     onNewOrder: () -> Unit,
+    onOrderClick: (Long) -> Unit,
     viewModel: HomeViewModel = viewModel()
 ) {
     val totalOrders by viewModel.totalOrders.collectAsStateWithLifecycle()
@@ -115,7 +116,7 @@ fun HomeScreen(
                 }
             } else {
                 recent.forEach { order ->
-                    OrderCard(order)
+                    OrderCard(order = order, onClick = { onOrderClick(order.id) })
                 }
             }
         }

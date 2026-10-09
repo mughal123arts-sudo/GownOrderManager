@@ -27,5 +27,8 @@ private val dateFormatter: DateTimeFormatter =
 fun formatDate(millis: Long): String =
     dateFormatter.format(Instant.ofEpochMilli(millis).atZone(ZoneOffset.UTC))
 
+/** A delivery date of 0 means "not set". */
+fun formatDateOrDash(millis: Long): String = if (millis > 0L) formatDate(millis) else "-"
+
 fun todayMillis(): Long =
     LocalDate.now().atStartOfDay(ZoneOffset.UTC).toInstant().toEpochMilli()

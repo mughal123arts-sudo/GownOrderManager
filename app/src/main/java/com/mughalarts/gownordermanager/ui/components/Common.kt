@@ -1,5 +1,6 @@
 package com.mughalarts.gownordermanager.ui.components
 
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.ColumnScope
@@ -24,7 +25,7 @@ import com.mughalarts.gownordermanager.ui.theme.PendingBackground
 import com.mughalarts.gownordermanager.ui.theme.PendingText
 import com.mughalarts.gownordermanager.ui.theme.SuccessGreen
 import com.mughalarts.gownordermanager.util.PaymentStatus
-import com.mughalarts.gownordermanager.util.formatDate
+import com.mughalarts.gownordermanager.util.formatDateOrDash
 import com.mughalarts.gownordermanager.util.formatMoney
 
 @Composable
@@ -99,9 +100,15 @@ fun StatusBadge(status: String, modifier: Modifier = Modifier) {
 }
 
 @Composable
-fun OrderCard(order: Order, modifier: Modifier = Modifier) {
+fun OrderCard(
+    order: Order,
+    onClick: () -> Unit,
+    modifier: Modifier = Modifier
+) {
     Card(
-        modifier = modifier.fillMaxWidth(),
+        modifier = modifier
+            .fillMaxWidth()
+            .clickable(onClick = onClick),
         shape = RoundedCornerShape(16.dp),
         colors = CardDefaults.cardColors(containerColor = Color.White),
         elevation = CardDefaults.cardElevation(defaultElevation = 2.dp)
@@ -121,13 +128,13 @@ fun OrderCard(order: Order, modifier: Modifier = Modifier) {
                 StatusBadge(order.paymentStatus)
             }
             Text(
-                text = order.customerName,
+                text = order.customerName.ifBlank { "No name" },
                 style = MaterialTheme.typography.titleMedium
             )
             InfoRow("School / College", order.schoolName.ifBlank { "-" })
             InfoRow("Total Gowns", order.totalGowns.toString())
             InfoRow("Total Amount", formatMoney(order.totalAmount))
-            InfoRow("Delivery Date", formatDate(order.deliveryDate))
+            InfoRow("Delivery Date", formatDateOrDash(order.deliveryDate))
         }
     }
 }
